@@ -1,5 +1,13 @@
-import { config as configKnex } from "./src/database/knex";
+import { Knex } from "knex";
 
-const config = configKnex;
+import path from "node:path";
 
-export default config;
+export = {
+  client: "sqlite3",
+  connection: path.resolve(__dirname, ".", "src", "database", "database.db"),
+
+  migrations: {
+    directory: path.resolve(__dirname, ".", "src", "database", "knex", "migrations"),
+    extension: "ts",
+  }
+} as Knex.Config
