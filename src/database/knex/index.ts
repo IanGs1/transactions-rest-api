@@ -1,5 +1,6 @@
-import { knex as defaultKnex } from "knex";
-
+import { knex } from "knex";
 import knexConfig from "../../../knexfile";
 
-export const knex = defaultKnex(knexConfig);
+const connection = knex(knexConfig);
+
+export default connection;
