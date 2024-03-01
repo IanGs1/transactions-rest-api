@@ -3,6 +3,7 @@ import fastify from "fastify";
 import crypto from "node:crypto"
 
 import knex from "./database/knex";
+import env from "./env";
 
 const app = fastify();
 
@@ -17,7 +18,7 @@ app.post("/transactions", async (request, reply) => {
 })
 
 app
-  .listen({ port: 3333 })
+  .listen({ port: env.PORT })
   .then(() => {
     console.log("HTTP server listening on: localhost:3333 ✨");
   })
