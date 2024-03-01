@@ -1,6 +1,6 @@
 import fastify from "fastify";
 
-import { knex } from "./database/knex";
+import knex from "./database/knex";
 
 const app = fastify();
 
