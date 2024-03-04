@@ -5,6 +5,10 @@ import crypto from "node:crypto";
 
 import knex from "../database/knex";
 
+/**
+ * Cookies <-> Formas de manter contexto entre requisições 
+ */ 
+
 export async function transactionRoutes(app: FastifyInstance) {
   app.post("/", async (request: FastifyRequest, reply: FastifyReply) => {
     const createTransactionBodySchema = z.object({
@@ -15,10 +19,22 @@ export async function transactionRoutes(app: FastifyInstance) {
     
     const { title, amount, type } = createTransactionBodySchema.parse(request.body);
 
+    let session_id = request.cookies.sessionId;
+
+    if (!session_id) {
+      session_id = crypto.randomUUID();
+
+      reply.cookie("session_id", session_id, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      })
+    }
+
     await knex("transactions").insert({
       id: crypto.randomUUID(),
       title,
       amount: type === "credit" ? amount : amount * -1,
+      session_id,
     });
 
     return reply.status(201).send();
