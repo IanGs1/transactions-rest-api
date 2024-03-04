@@ -22,5 +22,41 @@ export async function transactionRoutes(app: FastifyInstance) {
     });
 
     return reply.status(201).send();
+  });
+
+  app.get("/", async () => {
+    const transactions = await knex("transactions").select();
+
+    return {
+      transactions,
+    };
+  })
+
+  app.get("/summary", async () => {
+    const summary = await knex("transactions").sum("amount", { as: "amount" }).first();
+    
+    return {
+      summary,
+    }
+  })
+
+  app.get("/:transactionId", async (request: FastifyRequest, reply: FastifyReply) => {
+    const getTransactionParamsSchema = z.object({
+      transactionId: z.string().uuid(),
+    });
+
+    const { transactionId } = getTransactionParamsSchema.parse(request.params);
+
+    const transaction = await knex("transactions").where({ id: transactionId }).first();
+    if (!transaction) {
+      return reply.status(404).send({
+        status: "Error",
+        message: "It wasn't able to find your transaction!",
+      });
+    }
+
+    return {
+      transaction,
+    }
   })
 }
