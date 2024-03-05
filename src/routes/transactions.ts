@@ -17,12 +17,12 @@ export async function transactionRoutes(app: FastifyInstance) {
     
     const { title, amount, type } = createTransactionBodySchema.parse(request.body);
 
-    let session_id = request.cookies.sessionId;
+    let sessionId = request.cookies.sessionId;
 
-    if (!session_id) {
-      session_id = crypto.randomUUID();
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
 
-      reply.cookie("session_id", session_id, {
+      reply.cookie("sessionId", sessionId, {
         path: "/",
         maxAge: 60 * 60 * 24 * 7, // 7 days
       })
@@ -32,7 +32,7 @@ export async function transactionRoutes(app: FastifyInstance) {
       id: crypto.randomUUID(),
       title,
       amount: type === "credit" ? amount : amount * -1,
-      session_id,
+      session_id: sessionId,
     });
 
     return reply.status(201).send();

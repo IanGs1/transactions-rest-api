@@ -1,6 +1,6 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from "fastify";
 
-export function checkSessionIdExists(request: FastifyRequest, reply: FastifyReply) {
+export function checkSessionIdExists(request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) {
   const sessionId = request.cookies.sessionId;
 
   if (!sessionId) {
@@ -8,5 +8,7 @@ export function checkSessionIdExists(request: FastifyRequest, reply: FastifyRepl
       status: "Error",
       message: "Unauthorized",
     })
-  }
+  };
+
+  done();
 }
