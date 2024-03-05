@@ -5,9 +5,7 @@ import crypto from "node:crypto";
 
 import knex from "../database/knex";
 
-/**
- * Cookies <-> Formas de manter contexto entre requisições 
- */ 
+import { checkSessionIdExists } from "../middlewares/checkSessionIdExists";
 
 export async function transactionRoutes(app: FastifyInstance) {
   app.post("/", async (request: FastifyRequest, reply: FastifyReply) => {
@@ -40,30 +38,35 @@ export async function transactionRoutes(app: FastifyInstance) {
     return reply.status(201).send();
   });
 
-  app.get("/", async () => {
-    const transactions = await knex("transactions").select();
+  app.get("/", { preHandler: [checkSessionIdExists] }, async (request: FastifyRequest, reply: FastifyReply) => {
+    const { sessionId } = request.cookies;
+
+    const transactions = await knex("transactions").where({ session_id: sessionId }).select();
 
     return {
       transactions,
     };
   })
 
-  app.get("/summary", async () => {
-    const summary = await knex("transactions").sum("amount", { as: "amount" }).first();
+  app.get("/summary", { preHandler: [checkSessionIdExists] }, async (request: FastifyRequest) => {
+    const { sessionId } = request.cookies;
+
+    const summary = await knex("transactions").where({ session_id: sessionId }).sum("amount", { as: "amount" }).first();
     
     return {
       summary,
     }
   })
 
-  app.get("/:transactionId", async (request: FastifyRequest, reply: FastifyReply) => {
+  app.get("/:transactionId", { preHandler: [checkSessionIdExists] }, async (request: FastifyRequest, reply: FastifyReply) => {
     const getTransactionParamsSchema = z.object({
       transactionId: z.string().uuid(),
     });
 
     const { transactionId } = getTransactionParamsSchema.parse(request.params);
+    const { sessionId } = request.cookies;
 
-    const transaction = await knex("transactions").where({ id: transactionId }).first();
+    const transaction = await knex("transactions").where({ id: transactionId, session_id: sessionId }).first();
     if (!transaction) {
       return reply.status(404).send({
         status: "Error",
