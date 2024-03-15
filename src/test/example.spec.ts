@@ -1,7 +1,26 @@
-import { expect, test } from "vitest";
+import { expect, test, describe, beforeAll, afterAll } from "vitest";
 
-test("It should to 1 + 1 be 2", () => {
-  const sum = 1 + 1;
+import { app } from "../app";
+import request from "supertest";
 
-  expect(sum).toEqual(2);
-})
+describe("Transaction Routes", () => {
+  beforeAll(async () => {
+    await app.ready();
+  })
+  
+  afterAll(async () => {
+    await app.close();
+  })
+  
+  test("It should be able to create a new transaction", async () => {
+    const response = await request(app.server)
+      .post("/transactions")
+      .send({
+        title: "New Transaction",
+        amount: 5000,
+        type: "credit",
+      });
+  
+    expect(response.statusCode).toEqual(201);
+  })
+});
