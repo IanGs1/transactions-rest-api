@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import crypto from "node:crypto";
 
-import knex from "../database/knex";
+import knex from "../../database/knex";
 
 import { checkSessionIdExists } from "../middlewares/checkSessionIdExists";
 

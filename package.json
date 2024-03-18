@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "knex": "node --loader tsx ./node_modules/knex/bin/cli.js --knexfile ./knexfile.ts",
+    "build": "tsup src --out-dir build",
     "test": "npx vitest"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
     "@types/supertest": "^6.0.2",
     "eslint": "^8.57.0",
     "supertest": "^6.3.4",
+    "tsup": "^8.0.2",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",
     "vitest": "^1.3.1"
