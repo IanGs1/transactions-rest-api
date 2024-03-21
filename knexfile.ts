@@ -8,7 +8,7 @@ export = {
   connection: env.DATABASE_URL,
 
   migrations: {
-    directory: path.resolve(__dirname, "src", "database", "knex", "migrations"),
+    directory: path.resolve(__dirname, "database", "knex", "migrations"),
     extension: "ts",
   },
 
